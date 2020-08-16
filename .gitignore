@@ -1,2 +1,8 @@
 *.swp
 CMakeLists.txt
+teleop_twist_keyboard
+turtlebot
+turtlebot_interactions
+turtlebot_simulator
+slam_gmapping
+
