@@ -39,24 +39,24 @@ int main(int argc, char** argv)
         ROS_INFO("Failed, no hooray");
     }
 
-   // goal.target_pose.header.frame_id = "map";
-   // goal.target_pose.header.stamp = ros::Time::now();
+    goal.target_pose.header.frame_id = "map";
+    goal.target_pose.header.stamp = ros::Time::now();
 
-   // goal.target_pose.pose.position.x = 3.0;
-   // goal.target_pose.pose.position.y = 5.0;
-   // goal.target_pose.pose.orientation.w = 1.0;
+    goal.target_pose.pose.position.x = 3.0;
+    goal.target_pose.pose.position.y = 5.0;
+    goal.target_pose.pose.orientation.w = 1.0;
 
-   // ROS_INFO("Sending goal");
-   // ac.sendGoal(goal);
+    ROS_INFO("Sending goal");
+    ac.sendGoal(goal);
 
-   // ac.waitForResult();
+    ac.waitForResult();
 
-   // if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-   // {
-   //     ROS_INFO("Hooray");
-   // }else{
-   //     ROS_INFO("Failed, no hooray");
-   // }
+    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    {
+        ROS_INFO("Hooray");
+    }else{
+        ROS_INFO("Failed, no hooray");
+    }
 
     return 0;
 
