@@ -2,13 +2,15 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <vector>
+#include <chrono>
+#include <thread>
+
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 using namespace std;
 
 int main(int argc, char** argv)
 {
-    int first_arrived = 0;
 
     vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
 
@@ -38,7 +40,20 @@ int main(int argc, char** argv)
         ac.sendGoal(goal);
 
         ac.waitForResult();
+
+        if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        {
+            ROS_INFO("Goal reached");
+        }else{
+            ROS_INFO("Goal was not reached");
+        }
+
+        chrono::seconds dura(5);
+        this_thread::sleep_for(dura);
+
     }
+
+    ROS_INFO("Final goal reached");
 
     return 0;
 
