@@ -48,6 +48,7 @@ int main(int argc, char** argv)
             ROS_INFO("Goal was not reached");
         }
 
+        ROS_INFO("Waiting for 5 seconds");
         chrono::seconds dura(5);
         this_thread::sleep_for(dura);
 
