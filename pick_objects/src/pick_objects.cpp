@@ -1,13 +1,16 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-
+#include <vector>
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
+using namespace std;
 
 int main(int argc, char** argv)
 {
     int first_arrived = 0;
+
+    vector<vector< double >> goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
 
     ros::init(argc, argv, "pick_objects");
 
@@ -17,50 +20,27 @@ int main(int argc, char** argv)
     {
         ROS_INFO("Waiting for the move_base action server to come up");
     }
+    
 
-    move_base_msgs::MoveBaseGoal goal;
-
-    goal.target_pose.header.frame_id = "map";
-    goal.target_pose.header.stamp = ros::Time::now();
-
-    goal.target_pose.pose.position.x = 1.0;
-    goal.target_pose.pose.position.y = 3.0;
-    goal.target_pose.pose.orientation.w = 1.0;
-
-    ROS_INFO("Sending goal");
-    ac.sendGoal(goal);
-
-    ac.waitForResult();
-
-    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    for( int i = 0; i < goals.size(); i++)
     {
-        ROS_INFO("Hooray");
-    }else{
-        ROS_INFO("Failed, no hooray");
-    }
 
-    goal.target_pose.header.frame_id = "map";
-    goal.target_pose.header.stamp = ros::Time::now();
+        move_base_msgs::MoveBaseGoal goal;
 
-    goal.target_pose.pose.position.x = 3.0;
-    goal.target_pose.pose.position.y = 5.0;
-    goal.target_pose.pose.orientation.w = 1.0;
+        goal.target_pose.header.frame_id = "map";
+        goal.target_pose.header.stamp = ros::Time::now();
 
-    ROS_INFO("Sending goal");
-    ac.sendGoal(goal);
+        goal.target_pose.pose.position.x = goals[i][0];
+        goal.target_pose.pose.position.y = goals[i][1];
+        goal.target_pose.pose.orientation.w = goals[i][2];
 
-    ac.waitForResult();
+        ROS_INFO("Sending goal");
+        ac.sendGoal(goal);
 
-    if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
-        ROS_INFO("Hooray");
-    }else{
-        ROS_INFO("Failed, no hooray");
+        ac.waitForResult();
     }
 
     return 0;
-
-
 
 }
 
