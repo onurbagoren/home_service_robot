@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
 
-    vector<vector< double >> goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
+    vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
 
     ros::init(argc, argv, "pick_objects");
 
