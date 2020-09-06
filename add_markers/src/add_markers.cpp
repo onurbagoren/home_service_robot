@@ -1,35 +1,42 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+#include <nav_msgs/Odometry.h>
+#include <math.h>
+#include <vector>
 
-int main( int argc, char** argv )
+class AddMarkers
 {
-    ros::init(argc, argv, "add_markers");
-    ros::NodeHandle n;
-    ros::Rate r(1);
-    ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-    
-    uint32_t shape = visualization_msgs::Marker::CUBE;
+    public:
+        AddMarkers();
+        ros::NodeHandle n;
+        geometry_msgs::Pose goal;
+        geometry_msgs::Pose robot_odom;
+        ros::Publisher marker_pub;
+        ros::Subscriber goal_sub;
+        ros::Subscriber odom_sub;
+        vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
+        void goalCallBack( const geometry_msgs::Pose &msg);
+        void odomCallBack( const nav_msgs::Odometry::ConstPtr &msg);
 
-    while(ros::ok())
+
+    AddMarkers::AddMarkers()
     {
+        marker_pub = n.advertise<visualization_msgs::Marker>("/visual_marker", 1);
+        goal_sub = n.subscribe("/goal", 1, &AddMarkers::goalCallBack, this);
+        odom_sub = n.subscribe("/odom", 1, &AddMarkers::odomCallBack, this);
+
+        uint32_t shape = visualization_msgs::Marker::CUBE;
+
         visualization_msgs::Marker marker;
 
         marker.header.frame_id = "/map";
         marker.header.stamp = ros::Time::now();
 
-
-        marker.ns = "basic_shapes";
+        marker.ns = "basic_shape";
         marker.id = 0;
-
         marker.type = shape;
 
-        marker.action = visualization_msgs::Marker::ADD;
-
-
-        marker.pose.position.x = 3;
-        marker.pose.position.y = 1;
         marker.pose.position.z = 0;
-        marker.pose.orientation.x = 1.0;
         marker.pose.orientation.y = 0.0;
         marker.pose.orientation.z = 0.0;
         marker.pose.orientation.w = 0.0;
@@ -43,35 +50,66 @@ int main( int argc, char** argv )
         marker.color.b = 0.0f;
         marker.color.a = 1.0f;
 
-        marker.lifetime = ros::Duration();
-
-        while(marker_pub.getNumSubscribers() < 1)
+        if( marker_pub.getNumSubscribers() < 1 )
         {
-            if(!ros::ok())
+            ROS_INFO( "No subscribers to the marker pub." );
+        } 
+        for( unsigned int i = 0; i < goals.size(); i++)
+        {
+            marker.pose.position.x = goals[i][0];
+            marker.pose.position.y = goals[i][1];
+            marker.pose.orientation.z = goals[i][2]; 
+            float x_diff = robot_odom.position.x - goal.position.x;
+            float y_diff = robot_odom.position.y - goal.position.y;
+            float abs_distance = sqrt( x_diff * x_diff + y_diff * y_diff );
+            if ( abs_distance < 0.20 )
             {
-                return 0;
+                marker_pub.publish(marker);
             }
-            ROS_WARN_ONCE("Please create a subscriber to the marker");
-            sleep(1);
-        }
-        marker_pub.publish(marker);
-
-        switch( shape )
-        {
-            case visualization_msgs::Marker::CUBE:
-                shape = visualization_msgs::Marker::SPHERE;
-                break;
-            case visualization_msgs::Marker::SPHERE:
-                shape = visualization_msgs::Marker::ARROW;
-                break;
-            case visualization_msgs::Marker::ARROW:
-                shape = visualization_msgs::Marker::CYLINDER;
-                break;
-            case visualization_msgs::Marker::CYLINDER:
-                shape = visualization_msgs::Marker::CUBE;
-                break;
+            } else {
+                ros::spinOnce();
+            }
         }
 
-        r.sleep();
-    }
+    };
+
+    void AddMarkers::goalCallBack( const geometry_msgs::Pose &msg )
+    {
+        //update the goal information
+        goal.position.x = msg->position.x;
+        goal.position.y = msg->position.y;
+        goal.position.z = msg->position.z;
+
+        goal.orientation.x = msg->orientation.x;
+        goal.orientation.y = msg->orientation.y;
+        goal.orientation.z = msg->orientation.z;
+        goal.orientation.w = msg->orientation.w;
+
+        //
+    };
+
+    void AddMarkers::odomCallBack( const nav_msgs::Odometry::ConstPtr &msg)
+    {
+        //update the current pose of the robot
+        robot_odom.position.x = msg->pose.pose.position.x;
+        robot_odom.position.y = msg->pose.pose.position.y;
+        robot_odom.position.z = msg->pose.pose.position.z;
+
+        robot_odom.orientation.x = msg->pose.pose.orientation.x;
+        robot_odom.orientation.y = msg->pose.pose.orientation.y;
+        robot_odom.orientation.z = msg->pose.pose.orientation.z;
+        robot_odom.orientation.w = msg->pose.pose.orientation.w;
+    };
+}
+
+
+
+int main( int argc, char** argv )
+{
+    ros::init(argc, argv, "add_markers");
+    AddMarkers AddMarkers;
+    ros::Rate r(1);
+    ros::spin();
+
+    return 0;
 }
