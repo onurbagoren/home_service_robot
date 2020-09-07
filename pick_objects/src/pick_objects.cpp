@@ -27,7 +27,7 @@ int main(int argc, char** argv)
         ROS_INFO("Waiting for the move_base action server to come up");
     }
     
-    move_base_msgs::MoseBaseGoal goal;
+    move_base_msgs::MoveBaseGoal goal;
 
     goal.target_pose.header.frame_id = "map";
     goal.target_pose.header.stamp = ros::Time::now();
