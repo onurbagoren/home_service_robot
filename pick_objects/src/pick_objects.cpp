@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 
     ros::NodeHandle n;
 
-    ros::Publisher goal_pub = n.advertise<geometry_msgs::Pose>("/goal", 10);
+    ros::Publisher goal_pub = n.advertise<geometry_msgs::Pose>("/goal", 1000);
 
     vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
 
@@ -40,6 +40,8 @@ int main(int argc, char** argv)
         goal.target_pose.pose.position.y = goals[i][1];
         goal.target_pose.pose.orientation.w = goals[i][2];
 
+        goal_pub.publish( goal.target_pose.pose );
+
         ROS_INFO("Sending goal");
         ac.sendGoal( goal );
 
@@ -53,8 +55,7 @@ int main(int argc, char** argv)
         }
 
         ROS_INFO("Waiting for 5 seconds");
-        chrono::seconds dura(5);
-        this_thread::sleep_for(dura);
+        sleep(5);
 
     }
 
