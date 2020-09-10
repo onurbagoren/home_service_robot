@@ -1,6 +1,10 @@
 #!/bin/sh
-xterm -e " gazebo " &
-sleep 5
-xterm -e " source /opt/ros/kinetic/setup.bash; roscore" &
-sleep 5
-xterm -e " rosrun rviz rviz"
+
+xterm -e "roslaunch turtlebot_gazebo turtlebot_world.launch" &
+sleep 10
+xterm -e "roslaunch turtlebot_gazebo amcl_demo.launch" &
+sleep 3
+xterm -e "roslaunch turtlebot_rviz_launchers view_navigation.launch" &
+sleep 3
+xterm -e "rosrun add_markers sample_node" &
+sleep 3
