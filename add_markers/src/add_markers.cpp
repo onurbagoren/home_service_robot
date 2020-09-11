@@ -83,12 +83,16 @@ void AddMarkers::publishMarker( void )
 
         marker.action = visualization_msgs::Marker::ADD;
 
+        ROS_INFO("Publising marker");
         marker_pub.publish(marker);
+        ROS_INFO("Waiting 5 seconds");
         sleep(5);
         if( i != goals.size() - 1 )
         {
+            ROS_INFO("Deleting marker");
             marker.action = visualization_msgs::Marker::DELETE;
             marker_pub.publish( marker );
+            ROS_INFO("Waiting 5 seconds");
             sleep(5);
         }
     }
