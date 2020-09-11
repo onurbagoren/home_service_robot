@@ -19,15 +19,10 @@ class AddMarkers
 
         ros::NodeHandle n;
         ros::Publisher marker_pub;;
-        ros::Subscriber odom_sub;
-        ros::Subscriber goal_sub;
 
         vector< vector<float> > goals{ { 1.0, 3.0 }, { 4.0, 0.0 } };
 
-        void odomCallBack( const nav_msgs::Odometry::ConstPtr &msg );
-        void goalCallBack( const geometry_msgs::Pose &msg );
         void publishMarker( void );
-        bool robotAtMarker( geometry_msgs::Pose &robot_position, geometry_msgs::Pose &goal_position );
 };
 
 AddMarkers::AddMarkers()
@@ -102,7 +97,7 @@ void AddMarkers::publishMarker( void )
 int main( int argc, char** argv )
 {
     ros::init( argc, argv, "add_markers" );
-    AddMarkers addmarker;
+    AddMarkers add_markers;
     ros::Rate r(20);
     ros::spin();
     return 0;
