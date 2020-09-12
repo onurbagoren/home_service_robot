@@ -61,7 +61,6 @@ AddMarkers::AddMarkers()
         if( closeToMarker( robot_pose_, marker_pose_ ) )
         {
             marker.pose = marker_pose_;
-            cout << marker.pose << endl;    
             marker.action = visualization_msgs::Marker::ADD;
             if( start )
             {
