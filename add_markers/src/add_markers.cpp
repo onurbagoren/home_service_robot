@@ -85,7 +85,7 @@ AddMarkers::AddMarkers()
             marker.action = visualization_msgs::Marker::ADD;
             marker_pub.publish( marker );
         }
-        cout << reached_goal << endl;
+        // cout << reached_goal << endl;
         if( closeToMarker( robot_pose_, marker.pose ) && !atOrigin )
         // if( reached_goal && !atOrigin )
         {
@@ -144,8 +144,9 @@ bool AddMarkers::closeToMarker( geometry_msgs::Pose robot_pose, geometry_msgs::P
     float y_diff = robot_pose.position.y - marker_pose.position.y;
     float position_distance = sqrt( pow(x_diff, 2) + pow(y_diff, 2) );
     float angle_diff = abs(robot_pose.orientation.w - marker_pose.orientation.w);
-    // ROS_INFO("robot_pose.position: %f %f",  robot_pose.position.x, robot_pose.position.y);
-    // ROS_INFO("marker_pose.position: %f %f",  marker_pose.position.x, marker_pose.position.y);
+    ROS_INFO("robot_pose.position: %f %f %f",  robot_pose.position.x, robot_pose.position.y, robot_pose.orientation.w);
+    ROS_INFO("marker_pose.position: %f %f %f",  marker_pose.position.x, marker_pose.position.y, marker_pose.orientation.w );
+    ROS_INFO("differences: %f <= 0.3,  %f <= %f \n",  position_distance, angle_diff, M_PI/180);
     if( position_distance <= 0.3 && angle_diff < M_PI/180 )
     {
         return true;

@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     ros::Publisher goal_pub = n.advertise<move_base_msgs::MoveBaseGoal>("/goal", 10);
     ros::Publisher arrived_pub = n.advertise<std_msgs::Bool>("/reached", 10);
 
-    vector< vector< float > > goals{ {1.0, 0.0, 3*M_PI/2}, {-5.0, 6.0, 1.0} };
+    vector< vector< float > > goals{ {1.0, 0.0, 1.0}, {-5.0, 6.0, 1.0} };
 
     MoveBaseClient ac("move_base", true);
 
@@ -35,7 +35,8 @@ int main(int argc, char** argv)
     goal.target_pose.header.stamp = ros::Time::now();
     std_msgs::Bool reached;
     
-
+    reached.data = false;
+    arrived_pub.publish(reached);
     for( int i = 0; i < goals.size(); i++)
     {
         goal.target_pose.pose.position.x = goals[i][0];
@@ -54,8 +55,6 @@ int main(int argc, char** argv)
             ROS_INFO("Goal reached");
             reached.data = true;
             arrived_pub.publish( reached );
-            reached.data = false;
-            arrived_pub.publish(reached);
         } else {
             ROS_INFO("Goal was not reached");
             reached.data = false;

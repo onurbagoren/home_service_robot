@@ -2,7 +2,7 @@
 
 xterm -e "roslaunch turtlebot_gazebo turtlebot_world.launch world_file:=/home/$USER/catkin_ws/src/world/new_world.world" &
 # xterm -e "roslaunch turtlebot_gazebo turtlebot_world.launch" &
-sleep 10
+sleep 15
 xterm -e "roslaunch turtlebot_gazebo amcl_demo.launch map_file:=/home/$USER/catkin_ws/src/world/obagoren.yaml" &
 # xterm -e "roslaunch turtlebot_gazebo amcl_demo.launch" &
 sleep 3
