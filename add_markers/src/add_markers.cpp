@@ -17,13 +17,16 @@ class AddMarkers
         ros::Publisher marker_pub;
         ros::Subscriber goal_sub;
         ros::Subscriber odom_sub;
+        ros::Subscriber amcl_sub;
         void odomCallBack( const nav_msgs::Odometry::ConstPtr &msg );
         void goalCallBack( const move_base_msgs::MoveBaseGoal &msg );
+        void amclPoseCallBack( const geometry_msgs::PoseWithCovariance &msg );
         vector< vector <float> > marker_locations{ { 1.0, 3.0, 1.0 }, { 4.0, 0.0, 1.0 } };
 
         visualization_msgs::Marker marker;
         geometry_msgs::Pose robot_pose_;
         geometry_msgs::Pose marker_pose_;
+        geometry_msgs::Pose amcl_marker_pose_;
         bool start = true;
         bool pick_up = true;
         bool searching = true;
@@ -38,6 +41,7 @@ AddMarkers::AddMarkers()
     marker_pub = n.advertise<visualization_msgs::Marker>( "visualization_marker", 10 );
     goal_sub = n.subscribe( "/goal", 1, &AddMarkers::goalCallBack, this );
     odom_sub = n.subscribe( "/odom", 10, &AddMarkers::odomCallBack, this );
+    amcl_sub = n.subscribe( "/amcl_pose", 10, &AddMarkers::amclPoseCallBack, this );
 
     marker.header.frame_id = "map";
     marker.header.stamp = ros::Time::now();
@@ -60,6 +64,7 @@ AddMarkers::AddMarkers()
 
     while( true )
     {
+        marker.pose = marker_pose_;
         if( marker.pose.position.x == 0 && marker.pose.position.y == 0 )
         {
             atOrigin = true;
@@ -113,6 +118,12 @@ void AddMarkers::goalCallBack( const move_base_msgs::MoveBaseGoal &msg )
     ROS_INFO( "goalCallBack: x=%f, y=%f, w=%f", marker_pose_.position.x, marker_pose_.position.y, marker_pose_.orientation.w);
     if( !pick_up )
         changed = true;
+}
+
+void AddMarkers::amclPoseCallBack( const geometry_msgs::PoseWithCovariance &msg)
+{
+    amcl_marker_pose_ = msg.pose;
+    ROS_INFO( "At amcl callback: %f, %f, %f", amcl_marker_pose_.position.x, amcl_marker_pose_.position.y, amcl_marker_pose_.orientation.w );
 }
 
 bool AddMarkers::closeToMarker( geometry_msgs::Pose robot_pose, geometry_msgs::Pose marker_pose )

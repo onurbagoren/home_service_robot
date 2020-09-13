@@ -17,6 +17,10 @@ int main(int argc, char** argv)
 
     ros::Publisher goal_pub = n.advertise<move_base_msgs::MoveBaseGoal>("/goal", 10);
 
+    vector< vector< float > > goals{ {-1.0, 0.0, 1.0}, {7.0, 12.0, 1.0} };
+
+    MoveBaseClient ac("move_base", true);
+
     while(!ac.waitForServer(ros::Duration(5.0)))
     {
         ROS_INFO("Waiting for the move_base action server to come up");
