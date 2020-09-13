@@ -1,5 +1,8 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+#include <vector>
+
+using namespace std;
 
 int main( int argc, char** argv )
 {
@@ -7,6 +10,8 @@ int main( int argc, char** argv )
     ros::NodeHandle n;
     ros::Rate r(1);
     ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+
+    vector< vector< float > > goals{{4.0, 5.0}, {3.0, 1.0}};
 
     uint32_t shape = visualization_msgs::Marker::CUBE;
 
@@ -21,10 +26,6 @@ int main( int argc, char** argv )
 
         marker.type = shape;
 
-        marker.action = visualization_msgs::Marker::ADD;
-
-        marker.pose.position.x = 5;
-        marker.pose.position.y = 3;
         marker.pose.position.z = 0;
         marker.pose.orientation.x = 0.0;
         marker.pose.orientation.y = 0.0;
@@ -49,6 +50,20 @@ int main( int argc, char** argv )
                 return 0;
             }
             ROS_WARN_ONCE("Please create a subscriber to the marker");
+        }
+
+        for( int i = 0; i < goals.size(); i++) 
+        {
+            marker.pose.position.x = goals[i][0];
+            marker.pose.position.y = goals[i][1];
+            marker.action = visualization_msgs::Marker::ADD;
+            marker_pub.publish( marker );
+            sleep(5);
+            if( i == 0){
+                marker.action = visualization_msgs::Marker::DELETE;
+                marker_pub.publish( marker );
+                sleep(5);
+            }
         }
 
         marker_pub.publish( marker );

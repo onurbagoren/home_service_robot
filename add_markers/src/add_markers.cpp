@@ -60,7 +60,6 @@ AddMarkers::AddMarkers()
 
     while( true )
     {
-        marker.pose = marker_pose_;
         if( marker.pose.position.x == 0 && marker.pose.position.y == 0 )
         {
             atOrigin = true;
