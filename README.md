@@ -30,16 +30,32 @@ catkin_make
 ```
 
 Execute test slam:
-Execute home service:
 ```
 cd /home/$USER/catkin_ws/
 ./src/scripts/test_slam.sh
 ```
 Image from the map that was produced:
+![1st Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/map_2.png)
+![2nd Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/MAP.png)
 
+Execute add markers:
+Marker will appear at a location, wait 5 seconds, disappear, wait 5 seconds, appear at second location.
+```
+cd /home/$USER/catkin_ws/
+./src/scripts/add_markers.sh
+```
+
+Execute pick objects:
+This will move the robot to goal 1, wait for 5 seconds and then to goal 2
+```
+cd /home/$USER/catkin_ws/
+./src/scripts/pick_objects.sh
+```
 
 Execute home service:
 ```
 cd /home/$USER/catkin_ws/
 ./src/scripts/home_service.sh
 ```
+Images from the home service:
+![Image of robot at the marker pick up](https://github.com/onurbagoren/home_service_robot/blob/master/at_marker.png)
