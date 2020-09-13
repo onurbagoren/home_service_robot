@@ -59,15 +59,15 @@ int main( int argc, char** argv )
             marker.action = visualization_msgs::Marker::ADD;
             marker_pub.publish( marker );
             sleep(5);
-            if( i == 0){
+            if( i == 0 ){
                 marker.action = visualization_msgs::Marker::DELETE;
                 marker_pub.publish( marker );
                 sleep(5);
             }
         }
 
-        marker_pub.publish( marker );
-
-        r.sleep();
+        break; 
+        // r.sleep();
     }
+    return 0;
 }

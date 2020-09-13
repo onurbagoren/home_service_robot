@@ -35,8 +35,8 @@ cd /home/$USER/catkin_ws/
 ./src/scripts/test_slam.sh
 ```
 Image from the map that was produced:
-![1st Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/map_2.png)
-![2nd Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/MAP.png)
+![1st Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/images/map_2.png)
+![2nd Image from slam](https://github.com/onurbagoren/home_service_robot/blob/master/images/MAP.png)
 
 Execute add markers:
 Marker will appear at a location, wait 5 seconds, disappear, wait 5 seconds, appear at second location.
@@ -58,4 +58,4 @@ cd /home/$USER/catkin_ws/
 ./src/scripts/home_service.sh
 ```
 Images from the home service:
-![Image of robot at the marker pick up](https://github.com/onurbagoren/home_service_robot/blob/master/at_marker.png)
+![Image of robot at the marker pick up](https://github.com/onurbagoren/home_service_robot/blob/master/images/at_marker.png)
