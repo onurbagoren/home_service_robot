@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 
     ros::Publisher goal_pub = n.advertise<move_base_msgs::MoveBaseGoal>("/goal", 10);
 
-    vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 0.0, 1.0}  };
+    vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 1.0, 1.0}  };
 
     MoveBaseClient ac("move_base", true);
 
@@ -38,6 +38,7 @@ int main(int argc, char** argv)
         goal.target_pose.pose.position.x = goals[i][0];
         goal.target_pose.pose.position.y = goals[i][1];
         goal.target_pose.pose.orientation.w = goals[i][2];
+
 
         goal_pub.publish( goal );
         ROS_INFO("Sending goal");
