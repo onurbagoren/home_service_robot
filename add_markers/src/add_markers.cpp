@@ -111,6 +111,7 @@ void AddMarkers::odomCallBack( const nav_msgs::Odometry::ConstPtr &msg )
 void AddMarkers::goalCallBack( const move_base_msgs::MoveBaseGoal &msg )
 {
     marker_pose_ = msg.target_pose.pose;
+    ROS_INFO( "goalCallBack: x=%f, y=%f, w=%f", marker_pose_.position.x, marker_pose_.position.y, marker_pose_.orientation.w);
     if( !pick_up )
         changed = true;
 }
@@ -121,6 +122,8 @@ bool AddMarkers::closeToMarker( geometry_msgs::Pose robot_pose, geometry_msgs::P
     float y_diff = robot_pose.position.y - marker_pose.position.y;
     float position_distance = sqrt( pow(x_diff, 2) + pow(y_diff, 2) );
     float angle_diff = abs(robot_pose.orientation.w - marker_pose.orientation.w);
+    cout << "robot_pose.position.x: " << robot_pose.position.x << " robot_pose.position.y: " << robot_pose.position.y << endl;
+    cout << "marker_pose.position.x: " << marker_pose.position.x << " marker_pose.position.y: " << marker_pose.position.y << endl << endl;
     if( position_distance <= 0.2 && angle_diff < M_PI/180 )
     {
         return true;
