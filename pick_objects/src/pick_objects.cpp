@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 
     ros::Publisher goal_pub = n.advertise<move_base_msgs::MoveBaseGoal>("/goal", 10);
 
-    vector<vector< double > > goals{ {1.0, 3.0, 1.0}, {4.0, 1.0, 1.0}  };
+    vector<vector< double > > goals{ {-1.0, -2.0, 1.0}, {7.0, 12.0, 1.0}  };
 
     MoveBaseClient ac("move_base", true);
 
