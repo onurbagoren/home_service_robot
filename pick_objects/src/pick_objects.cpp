@@ -1,9 +1,11 @@
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include <std_msgs/Bool.h>
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -16,8 +18,9 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
 
     ros::Publisher goal_pub = n.advertise<move_base_msgs::MoveBaseGoal>("/goal", 10);
+    ros::Publisher arrived_pub = n.advertise<std_msgs::Bool>("/reached", 10);
 
-    vector< vector< float > > goals{ {-1.0, 0.0, 1.0}, {7.0, 12.0, 1.0} };
+    vector< vector< float > > goals{ {1.0, 0.0, 3*M_PI/2}, {-5.0, 6.0, 1.0} };
 
     MoveBaseClient ac("move_base", true);
 
@@ -30,6 +33,7 @@ int main(int argc, char** argv)
 
     goal.target_pose.header.frame_id = "map";
     goal.target_pose.header.stamp = ros::Time::now();
+    std_msgs::Bool reached;
     
 
     for( int i = 0; i < goals.size(); i++)
@@ -48,8 +52,14 @@ int main(int argc, char** argv)
         if( ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED )
         {
             ROS_INFO("Goal reached");
+            reached.data = true;
+            arrived_pub.publish( reached );
+            reached.data = false;
+            arrived_pub.publish(reached);
         } else {
             ROS_INFO("Goal was not reached");
+            reached.data = false;
+            arrived_pub.publish( reached );
         }
 
         ROS_INFO("Waiting for 5 seconds");

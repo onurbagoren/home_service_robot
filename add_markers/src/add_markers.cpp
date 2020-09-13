@@ -2,6 +2,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <visualization_msgs/Marker.h>
 #include <nav_msgs/Odometry.h>
+#include <std_msgs/Bool.h>
 #include <vector>
 
 using namespace std;
@@ -18,15 +19,18 @@ class AddMarkers
         ros::Subscriber goal_sub;
         ros::Subscriber odom_sub;
         ros::Subscriber amcl_sub;
+        ros::Subscriber reached_sub;
         void odomCallBack( const nav_msgs::Odometry::ConstPtr &msg );
         void goalCallBack( const move_base_msgs::MoveBaseGoal &msg );
         void amclPoseCallBack( const geometry_msgs::PoseWithCovariance &msg );
+        void reachedCallBack( const std_msgs::Bool::ConstPtr &msg ); 
         vector< vector <float> > marker_locations{ { 1.0, 3.0, 1.0 }, { 4.0, 0.0, 1.0 } };
 
         visualization_msgs::Marker marker;
         geometry_msgs::Pose robot_pose_;
         geometry_msgs::Pose marker_pose_;
         geometry_msgs::Pose amcl_marker_pose_;
+        bool reached_goal;
         bool start = true;
         bool pick_up = true;
         bool searching = true;
@@ -41,7 +45,8 @@ AddMarkers::AddMarkers()
     marker_pub = n.advertise<visualization_msgs::Marker>( "visualization_marker", 10 );
     goal_sub = n.subscribe( "/goal", 1, &AddMarkers::goalCallBack, this );
     odom_sub = n.subscribe( "/odom", 10, &AddMarkers::odomCallBack, this );
-    amcl_sub = n.subscribe( "/amcl_pose", 10, &AddMarkers::amclPoseCallBack, this );
+    amcl_sub = n.subscribe( "amcl_pose", 10, &AddMarkers::amclPoseCallBack, this );
+    reached_sub = n.subscribe( "/reached", 10, &AddMarkers::reachedCallBack, this );
 
     marker.header.frame_id = "map";
     marker.header.stamp = ros::Time::now();
@@ -80,8 +85,9 @@ AddMarkers::AddMarkers()
             marker.action = visualization_msgs::Marker::ADD;
             marker_pub.publish( marker );
         }
-
+        cout << reached_goal << endl;
         if( closeToMarker( robot_pose_, marker.pose ) && !atOrigin )
+        // if( reached_goal && !atOrigin )
         {
             if( pick_up ) { // Picked up
                 sleep(5);
@@ -126,15 +132,21 @@ void AddMarkers::amclPoseCallBack( const geometry_msgs::PoseWithCovariance &msg)
     ROS_INFO( "At amcl callback: %f, %f, %f", amcl_marker_pose_.position.x, amcl_marker_pose_.position.y, amcl_marker_pose_.orientation.w );
 }
 
+void AddMarkers::reachedCallBack( const std_msgs::Bool::ConstPtr &msg )
+{
+    reached_goal = msg->data;
+    ROS_INFO("reachedCallBack: %d", reached_goal);
+}
+
 bool AddMarkers::closeToMarker( geometry_msgs::Pose robot_pose, geometry_msgs::Pose marker_pose )
 {
     float x_diff = robot_pose.position.x - marker_pose.position.x;
     float y_diff = robot_pose.position.y - marker_pose.position.y;
     float position_distance = sqrt( pow(x_diff, 2) + pow(y_diff, 2) );
     float angle_diff = abs(robot_pose.orientation.w - marker_pose.orientation.w);
-    cout << "robot_pose.position.x: " << robot_pose.position.x << " robot_pose.position.y: " << robot_pose.position.y << endl;
-    cout << "marker_pose.position.x: " << marker_pose.position.x << " marker_pose.position.y: " << marker_pose.position.y << endl << endl;
-    if( position_distance <= 0.2 && angle_diff < M_PI/180 )
+    // ROS_INFO("robot_pose.position: %f %f",  robot_pose.position.x, robot_pose.position.y);
+    // ROS_INFO("marker_pose.position: %f %f",  marker_pose.position.x, marker_pose.position.y);
+    if( position_distance <= 0.3 && angle_diff < M_PI/180 )
     {
         return true;
     }
@@ -143,7 +155,6 @@ bool AddMarkers::closeToMarker( geometry_msgs::Pose robot_pose, geometry_msgs::P
 
 int main( int argc, char** argv )
 {
-    cout << "ADD_MARKERS_NODE:" << endl;
     ros::init( argc, argv, "add_markers" );
     AddMarkers addmarker;
     return 0;
