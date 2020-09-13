@@ -11,7 +11,7 @@ int main( int argc, char** argv )
     ros::Rate r(1);
     ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 
-    vector< vector< float > > goals{{4.0, 5.0}, {3.0, 1.0}};
+    vector< vector< float > > goals{{-1.0, 0.0}, {1.0, 1.0}};
 
     uint32_t shape = visualization_msgs::Marker::CUBE;
 
