@@ -2,5 +2,3 @@ pgm_map_creator/
 teleop_twist_keyboard/
 my_robot/
 .vscode
-slam_gmapping/
-turtlebot*
